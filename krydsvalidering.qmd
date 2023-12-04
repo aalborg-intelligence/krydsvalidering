@@ -1,5 +1,5 @@
 ---
-title: "Krydsvalidering"
+title: "Polynomiel regression og modeludvælgelse "
 author: 'Aalborg Intelligence'
 date: ''
 format:
@@ -39,9 +39,7 @@ eps<-rnorm(20,0,sigma) # error terms
 y<-x1+eps # y-værdierne
 ```
 
-Forudsætninger: lineær regression, mindste kvadraters metode, polynomier
 
-## Polynomiel regression og modeludvælgelse 
 
 Denne note handler om, hvad man kan gøre, når man har flere forskellige
 modeller for data at vælge imellem og gerne vil vælge den bedste. Noten
@@ -125,7 +123,7 @@ helt tilsvarende måde. Vi kan fx prøve at tilpasse et
 tredjegradspolynomium $$f(x) = a_0 + a_1x + a_2x^2 +a_3x^3.$$ Det bedste
 tredjegradspolynomium er igen det, der minimerer kvadratsummen
 $$E=\sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n \left(y_i - (a_0 + a_1x_i + a_2x_i^2 + a_3x^3 )\right)^2.$$
-Grafen for det bedste tredjegradspolynomium er indtegnet for vores
+Grafen for det bedste tredjegradspolynomium er indtegnet i grøn for vores
 dataeksempel. Andengradspolynomiet er indtegnet med rød til
 sammenligning.
 
@@ -134,11 +132,11 @@ sammenligning.
 model3<-lm(y ~ x + I(x^2) + I(x^3))
 plot(x,y)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
-lines(x2,predict(model3,data.frame(x=x2)),col="blue")
+lines(x2,predict(model3,data.frame(x=x2)),col="green")
 legend(x = "bottomleft",          # Position
        legend = c("Grad 2", "Grad 3"),  # Legend texts
        lty = c(1, 1),           # Line types
-       col = c("red", "blue"),           # Line colors
+       col = c("red", "green"),           # Line colors
        lwd = 2) 
 ```
 
@@ -152,11 +150,11 @@ model3<-lm(y ~ x + I(x^2) + I(x^3))
 plot(x,y, xlim=c(-1,3),ylim=c(-4,0.5))
 x2<-1:400/100 -1
 lines(x2, predict(model, data.frame(x=x2)), col="red")
-lines(x2, predict(model3, data.frame(x=x2)), col="blue")
+lines(x2, predict(model3, data.frame(x=x2)), col="green")
 legend(x = "bottomleft",          # Position
        legend = c("Grad 2", "Grad 3"),  # Legend texts
        lty = c(1, 1),           # Line types
-       col = c("red", "blue"),           # Line colors
+       col = c("red", "green"),           # Line colors
        lwd = 2) 
 ```
 
@@ -211,7 +209,7 @@ bugter sig meget for at komme så tæt som muligt på datapunkterne. Dels
 virker det urealistisk, at den faktiske sammenhæng mellem $x$ og $y$
 skulle være så kompliceret. Dels opstår der et problem, hvis vi kommer
 med nye datapunkter. Her er polynomierne fra før tegnet sammen med 20
-nye datapunkter i grøn. Nu beskriver syvendegradspolynomiet pludselig
+nye datapunkter i lyserød. Nu beskriver syvendegradspolynomiet pludselig
 ikke datapunkterne så godt længere.
 
 ```{r overfitting}
@@ -221,10 +219,10 @@ set.seed(1234)
 v<-rnorm(20,0,sigma)
 #plot(x,y)
 x2<-1:400/100 -1
-plot(x,x1+v,col="green", main="Grad 2")
+plot(x,x1+v,col="magenta", main="Grad 2")
 lines(x2,predict(model,data.frame(x=x2)),col="red")
 #plot(x,y)
-plot(x,x1+v,col="green",main="Grad 7")
+plot(x,x1+v,col="magenta",main="Grad 7")
 lines(x2,predict(model7,data.frame(x=x2)),col="blue")
 
 ```
@@ -310,7 +308,7 @@ $E^{test}(p)$ svarer altså til den model, der er bedst til at forudsige
 værdierne i vores testdata, og vi vælger derfor at bruge dette $p$.
 
 I vores eksempel ovenfor får vi $E^{test}(2)=1,82$ og $E^{test}(7)=2,29$
-når vi bruger de grønne datapunkter som testdata. Andengradspolynomiet
+når vi bruger de lyserøde datapunkter som testdata. Andengradspolynomiet
 er altså bedre end syvendegradspolynomiet til at forudsige testdata.
 Bemærk at i begge tilfælde er $E^{test}$ langt større end $E^{træn}$
 fordi modellen kun er tilpasset til træningsdata.

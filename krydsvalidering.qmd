@@ -72,7 +72,7 @@ Hvad nu hvis det slet ikke ligner, at der er en lineær sammenhæng når vi
 tegner vores datapunkter ind i et koordinatsystem? Er det så overhovedet
 en god idé at forsøge med en lineær regression? På nedenstående plot ser
 det fx ikke ud til at punkterne følger en ret linje.
-```{r}
+```{r fig.width=8, fig.height=4}
 #| echo: false
 par(mfrow = c(1,2))
 model<-lm(y ~ x)
@@ -86,7 +86,7 @@ stigende tendens, mens der ser ud til at være en aftagende tendens for
 $x>1.5$. Den rette linje ser heller ikke ud til at følge punkterne
 særlig godt. Måske en parabel passer bedre på data?
 
-```{r degree2}
+```{r degree2, fig.width=4, fig.height=4}
 #| echo: false
 model<-lm(y ~ x + I(x^2))
 plot(x,y)
@@ -127,7 +127,7 @@ Grafen for det bedste tredjegradspolynomium er indtegnet i grøn for vores
 dataeksempel. Andengradspolynomiet er indtegnet med rød til
 sammenligning.
 
-```{r}
+```{r fig.height=4, fig.width=4}
 #| echo: false
 model3<-lm(y ~ x + I(x^2) + I(x^3))
 plot(x,y)
@@ -144,7 +144,7 @@ Det er ikke så let at se forskel. De to polynomier ser ud til at passe
 nogenlunde lige godt på vores data. Hvis vi zoomer ud på plottet
 ovenfor, er der dog en klar forskel:
 
-```{r extrapolate}
+```{r extrapolate, fig.width=4, fig.height=4}
 #| echo: false
 model3<-lm(y ~ x + I(x^2) + I(x^3))
 plot(x,y, xlim=c(-1,3),ylim=c(-4,0.5))
@@ -190,7 +190,7 @@ der minimerer kvadratsummen $$E=\sum_{i=1}^n (y_i - f(x_i))^2 .$$ Det
 bedste syvendegradspolynomium i vores lille dataeksempel er indtegnet
 med blå nedenfor:
 
-```{r degree7}
+```{r degree7, fig.width=4, fig.height=4}
 #| echo: false
 model7<-lm(y ~ x + I(x^2) + I(x^3) + I(x^4) + I(x^5) + I(x^6) + I(x^7))
 plot(x,y)
@@ -212,17 +212,17 @@ med nye datapunkter. Her er polynomierne fra før tegnet sammen med 20
 nye datapunkter i lyserød. Nu beskriver syvendegradspolynomiet pludselig
 ikke datapunkterne så godt længere.
 
-```{r overfitting}
+```{r overfitting, fig.width=8, fig.height=4}
 #| echo: false
 par(mfrow = c(1,2))
 set.seed(1234)
 v<-rnorm(20,0,sigma)
 #plot(x,y)
 x2<-1:400/100 -1
-plot(x,x1+v,col="magenta", main="Grad 2")
+plot(x,x1+v,col="magenta", main="Grad 2",ylab="y")
 lines(x2,predict(model,data.frame(x=x2)),col="red")
 #plot(x,y)
-plot(x,x1+v,col="magenta",main="Grad 7")
+plot(x,x1+v,col="magenta",main="Grad 7",ylab="y")
 lines(x2,predict(model7,data.frame(x=x2)),col="blue")
 
 ```
@@ -410,7 +410,7 @@ Eksempler her fra siden, hvor krydsvalidering kan benyttes:
 
 -   I forløbet \"Hvem ligner du mest\" sammenligner man et gråt punkt
     med alle punkter inden for en radius $r$ for at forudsige farven.
-    Det er ikke oplagt, hvordan man skal vælge dette $r$. En mulighed er
+    Det er ikke oplagt, hvordan man skal vælge denne radius. En mulighed er
     at komme med nogle gode bud $r_1,\ldots, r_N$ på radier og så bruge
     krydsvalidering til at vælge den bedste. En mulighed er at vælge
     $k=n$. Så får man det, der kaldes *leave-one-out* krydsvalidering. I

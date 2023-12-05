@@ -58,14 +58,14 @@ her på siden.
 
 Fra gymnasieundervisningen kender I lineær regression. Lad os sige, at
 vi har datapunkter $(x_i,y_i)$, hvor $i=1,2,\ldots,n$. Vi vil gerne
-finde den rette linje, der bedst tilnærmer punkterne. I denne note
+finde den rette linje, der bedst beskriver punkterne. I denne note
 kalder vi linjens skæring for $a_0$ og hældningen for $a_1$. Linjen har
 altså funktionsforskriften[^1] 
 
 $$f(x) = a_0 + a_1x.$$ 
 
 For at finde den bedste linje til at beskrive vores data, søger vi de værdier $a_0$ og
-$a_1$ som gør, at $a_0 + a_1x_i$ er så tæt på $y_i$ som muligt. Vi vil
+$a_1$, som gør, at $a_0 + a_1x_i$ er så tæt på $y_i$ som muligt. Vi vil
 altså gerne gøre afvigelserne fra linjen $y_i - (a_0 + a_1 x_i)$ så små
 som muligt. Bemærk, at disse afvigelser svarer til residualerne
 
@@ -76,16 +76,24 @@ $$
 Som et samlet mål for hvor store disse afvigelser er for
 alle vores punkter, kigger vi på kvadratsummen af afvigelserne/residualerne
 
-$$
-E=\sum_{i=1}^n \left(y_i - (a_0 + a_1x_i) \right)^2 = \sum_{i=1}^n r_i^2 .
-$$ 
+\begin{aligned}
+E &= \left(y_1 - (a_0 + a_1 x_1) \right)^2 + \left(y_2 - (a_0 + a_1 x_2) \right)^2 + \cdots + \left(y_n - (a_0 + a_1 x_n) \right)^2 \\
+& = r_1^2 + r_2^2 + \cdots + r_n^2
+\end{aligned}
+
+Nu er det lidt omstændeligt at skrive summen ud, som vi har gjort det ovenfor. I matematik vil man ofte skrive en sådan sum lidt mere kompakt ved hjælp af et summationstegn. Gør vi det, ser det sådan her ud:
+
+\begin{aligned}
+E &=\sum_{i=1}^n \left(y_i - (a_0 + a_1x_i) \right)^2 \\ 
+&= \sum_{i=1}^n r_i^2 .
+\end{aligned}
 
 Vi vælger så de værdier $a_0$ og $a_1$, der gør $E$ mindst mulig. Dette kaldes *mindste
 kvadraters metode*.
 
 ### Kvadratisk regression
 
-Hvad nu hvis det slet ikke ligner, at der er en lineær sammenhæng når vi
+Hvad nu hvis det slet ikke ligner, at der er en lineær sammenhæng, når vi
 tegner vores datapunkter ind i et koordinatsystem? Er det så overhovedet
 en god idé at forsøge med en lineær regression? På @fig-ret_linje ser
 det for eksempel ikke ud til at punkterne følger en ret linje.
@@ -93,22 +101,35 @@ det for eksempel ikke ud til at punkterne følger en ret linje.
 #| echo: false
 #| fig-cap: Til venstre ses et punktplot af et datasæt. Til højre er den bedste rette linje indtegnet.
 #| label: fig-ret_linje
-par(mfrow = c(1,2))
+par(mfrow = c(1,2),mar=c(4,4,1,1))
 model<-lm(y ~ x)
 plot(x,y)
 plot(x,y)
 lines(x2, predict(model,data.frame(x=x2)), col="red")
 ```
 
+Det fremgår også af residualplottet i @fig-residualplot. Her kan vi tydeligt se, at der er et mønster i den måde, residualerne fordeler sig omkring $x$-aksen. Det er altså tegn på, at en ret linje ikke er velegnet til at beskrive datapunkterne.
+
+```{r}
+#| echo: false
+#| fig-cap: Residualplottet for den bedste rette linje indtegnet i @fig-ret_linje.
+#| label: fig-residualplot
+par(mar=c(4,4,1,1))
+model<-lm(y ~ x)
+yhat <- predict(model,data.frame(x=x))
+plot(x,y-yhat,ylab="residual")
+abline(h=0)
+```
+
 Når $x$ ligger mellem 0 og 1, kunne der godt se ud til at være en svagt
-stigende tendens, mens der ser ud til at være en aftagende tendens for
-$x>1.5$. Den rette linje ser heller ikke ud til at følge punkterne
-særlig godt. Måske en parabel passer bedre på data? 
+stigende tendens i @fig-ret_linje, mens der ser ud til at være en aftagende tendens for
+$x>1.5$. Det svarer til, at residualerne i @fig-residualplot først er negative, så positive og dernæst negative igen. Den rette linje i @fig-ret_linje ser heller ikke ud til at følge punkterne særlig godt. Måske en parabel passer bedre på data? 
 
 ```{r degree2}
 #| echo: false
-#| fig-cap: Datasættet fra @fig-ret_linje men nu med en parabel indtegnet.
+#| fig-cap: Datasættet fra @fig-ret_linje, men nu med en parabel indtegnet.
 #| label: fig-parabel
+par(mar=c(4,4,1,1))
 model<-lm(y ~ x + I(x^2))
 plot(x,y)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
@@ -126,28 +147,33 @@ med koefficienter $a_0,a_1,a_2\in \mathbb{R}$.
 
 Hvordan finder man så det andengradspolynomium, der bedst beskriver
 datapunkterne? Tilgangen er faktisk den samme som den mindste kvadraters
-metode I kender fra lineær regression. Vi søger de værdier
-$a_0, a_1 ,a_2$ som gør, at $f(x_i)$ kommer så tæt på $y_i$ som muligt.
+metode, I kender fra lineær regression. Vi søger de værdier
+$a_0, a_1 ,a_2$, som gør, at $f(x_i)$ kommer så tæt på $y_i$ som muligt.
 Vi vil altså gerne gøre forskellene $y_i - f(x_i)$ så små som muligt. Vi
 kigger derfor på kvadratsummen af disse forskelle
 $$E=\sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n \left(y_i - (a_0 + a_1x_i + a_2x_i^2)\right)^2.$$
 Vi søger så de værdier $a_0,a_1,a_2$, der minimerer $E$.
 
 Gør man det i vores lille dataeksempel, fås netop den parabel, der er
-tegnet ind i koordinatsystemet ovenfor. Vi ser, at den beskriver data
+tegnet ind i koordinatsystemet i @fig-parabel. Vi ser, at den beskriver data
 langt bedre end den rette linje. Eksemplet viser i øvrigt vigtigheden af
-at tegne datapunkterne ind i et koordinatsystem inden man laver lineær
+at tegne datapunkterne ind i et koordinatsystem, inden man laver lineær
 regression. Ellers kan man nemt komme til at overse en eventuel
 ikke-lineær sammenhæng.
 
 ### Polynomiel regression generelt
 
-Men hvordan kan vi nu vide at et andengradspolynomium er det bedste til
+Men hvordan kan vi nu vide, at et andengradspolynomium er det bedste til
 at beskrive data? Måske et polynomium af endnu højere grad ville være
 bedre? Man kan tilpasse tredje- og højeregradspolynomier til data på en
-helt tilsvarende måde. Vi kan fx prøve at tilpasse et
-tredjegradspolynomium $$f(x) = a_0 + a_1x + a_2x^2 +a_3x^3.$$ Det bedste
-tredjegradspolynomium er igen det, der minimerer kvadratsummen
+helt tilsvarende måde. Vi kan for eksempel prøve at tilpasse et
+tredjegradspolynomium 
+
+$$
+f(x) = a_0 + a_1x + a_2x^2 +a_3x^3.
+$$ 
+
+Det bedste tredjegradspolynomium er igen det, der minimerer kvadratsummen
 $$E=\sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n \left(y_i - (a_0 + a_1x_i + a_2x_i^2 + a_3x^3 )\right)^2.$$
 Grafen for det bedste tredjegradspolynomium er indtegnet med grøn for vores
 dataeksempel i @fig-2grad_3grad. Andengradspolynomiet er indtegnet med rød til
@@ -157,6 +183,7 @@ sammenligning.
 #| echo: false
 #| fig-cap: Et andengradspolynomium (rød) og et tredjegradspolynomium (grøn) fittet til data. 
 #| label: fig-2grad_3grad
+par(mar=c(4,4,1,1))
 model3<-lm(y ~ x + I(x^2) + I(x^3))
 plot(x,y)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
@@ -174,8 +201,9 @@ ovenfor, og her er der en klar forskel:
 
 ```{r extrapolate}
 #| echo: false
-#| fig-cap: Plottet fra @fig-2grad_3grad men hvor der nu er zoomet lidt ud. Her ses det tydeligt, at der i "enderne" bliver stor forskel på anden- og tredjegradspolynomiet.
+#| fig-cap: Plottet fra @fig-2grad_3grad, men hvor der nu er zoomet lidt ud. Her ses det tydeligt, at der i "enderne" bliver stor forskel på anden- og tredjegradspolynomiet.
 #| label: fig-2grad_3grad_zoom
+par(mar=c(4,4,1,1))
 model3<-lm(y ~ x + I(x^2) + I(x^3))
 plot(x,y, xlim=c(-1,3),ylim=c(-4,0.5))
 x2<-1:400/100 -1
@@ -190,8 +218,8 @@ legend(x = "bottomleft",          # Position
 
 Selv om der ikke var stor forskel på anden- og tredjegradspolynomiet på
 intervallet $[0;2,5]$ hvor alle $x$-værdierne i vores datasæt lå, så er
-der stor forskel når vi kommer uden for dette interval. Man skal derfor
-passe på med at drage konklusioner om $x$-værdier uden for intervallet
+der stor forskel, når vi kommer uden for dette interval. Man skal derfor
+passe på med at drage konklusioner om $x$-værdier uden for intervallet,
 hvor $x$-værdierne i vores datasæt ligger (det kaldes at ekstrapolere),
 da disse kan være meget følsomme over for, hvilken grad vi har valgt for
 vores polynomium. I det hele taget er det en ulempe ved polynomiel
@@ -201,11 +229,11 @@ enderne.
 ## Overfitting
 
 Det er altså svært at afgøre med det blotte øje, om anden- eller
-tredjegradspolynomiet passer bedst til punkterne. Hvordan vælger vi så
+tredjegradspolynomiet passer bedst til punkterne. Hvordan vælger vi så,
 hvad der er bedst? Som mål for, hvor tæt polynomiet er på data, kan vi
 kigge på kvadratsummen $$E=\sum_{i=1}^n (y_i - f(x_i))^2.$$ For
-andengradspolynomiet får vi en kvadratsum på $E=1,14$, mens vi får
-$E=1,10$ for tredjegradspolynomiet. Tredjegradspolynomiet kommer altså
+andengradspolynomiet får vi en kvadratsum på $E=1.14$, mens vi får
+$E=1.10$ for tredjegradspolynomiet. Tredjegradspolynomiet kommer altså
 tættere på data end andengradspolynomiet. Det er på den anden side ikke
 så overraskende, for ved at sætte $a_3=0$ i et tredjegradspolynomium fås
 et andengradspolynomium. Andengradspolynomier er altså specialtilfælde
@@ -218,10 +246,13 @@ os prøve med et syvendegradspolynomium. Vi søger
 $$f(x) = a_0 + a_1x + a_2x^2 +a_3x^3 + a_4x^4 + a_5x^5 +a_6x^6 +a_7x^7,$$
 der minimerer kvadratsummen $$E=\sum_{i=1}^n (y_i - f(x_i))^2 .$$ Det
 bedste syvendegradspolynomium i vores lille dataeksempel er indtegnet
-med blå nedenfor:
+med blå på @fig-2grad_7grad nedenfor:
 
 ```{r degree7}
 #| echo: false
+#| fig-cap: Et andengradspolynomium (rød) og et syvendegradspolynomium (blå) fittet til data. 
+#| label: fig-2grad_7grad
+par(mar=c(4,4,1,1))
 model7<-lm(y ~ x + I(x^2) + I(x^3) + I(x^4) + I(x^5) + I(x^6) + I(x^7))
 plot(x,y)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
@@ -234,30 +265,32 @@ legend(x = "bottomleft",          # Position
 ```
 
 Kvadratsummen er på kun $E=0.90$, så umiddelbart virker det til at være
-en meget bedre model. Der er dog visse problemer. Det ses, at den grafen
+en meget bedre model. Der er dog visse problemer. Det ses, at grafen
 bugter sig meget for at komme så tæt som muligt på datapunkterne. Dels
 virker det urealistisk, at den faktiske sammenhæng mellem $x$ og $y$
 skulle være så kompliceret. Dels opstår der et problem, hvis vi kommer
-med nye datapunkter. Her er polynomierne fra før tegnet sammen med 20
+med nye datapunkter. I @fig-2grad_7grad_nypunkter er polynomierne fra før tegnet sammen med 20
 nye datapunkter i lyserød. Nu beskriver syvendegradspolynomiet pludselig
 ikke datapunkterne så godt længere.
 
 ```{r overfitting}
 #| echo: false
-par(mfrow = c(1,2))
+#| fig-cap: Et andengradspolynomium (rød) og et syvendegradspolynomium (blå) fittet til 20 nye datapunkter (lyserød). 
+#| label: fig-2grad_7grad_nypunkter
+par(mfrow = c(1,2),mar=c(4,4,2,1))
 set.seed(1234)
 v<-rnorm(20,0,sigma)
 #plot(x,y)
 x2<-1:400/100 -1
-plot(x,x1+v,col="magenta", main="Grad 2")
+plot(x,x1+v,col="magenta", main="Grad 2", ,ylab="y")
 lines(x2,predict(model,data.frame(x=x2)),col="red")
 #plot(x,y)
-plot(x,x1+v,col="magenta",main="Grad 7")
+plot(x,x1+v,col="magenta",main="Grad 7", ,ylab="y")
 lines(x2,predict(model7,data.frame(x=x2)),col="blue")
 
 ```
 
-Det der sker her er et eksempel på det fænomen, der kaldes
+Det, der sker her, er et eksempel på det fænomen, der kaldes
 *overfitting*: syvendegradspolynomiet havde tilpasset sig for godt til
 lige netop de sorte datapunkter. Når graden bliver for høj, begynder
 polynomiet at tilpasse sig nogle strukturer i data, som i virkeligheden
@@ -265,7 +298,7 @@ bare skyldes tilfældigheder. Det fungerer rigtig godt til at beskrive
 det oprindelige data, men til gengæld er det dårligt til at forudsige
 nye dataværdier.
 
-Jo højere grad man vælger at polynomiet skal have, desto bedre kan man
+Jo højere grad man vælger, at polynomiet skal have, desto bedre kan man
 tilnærme data. Med $n$ datapunkter, kan man faktisk altid finde et
 polynomium af grad $n-1$, der går igennem alle datapunkterne, men det er
 klart, at nye datapunkter ikke nødvendigvis følger dette polynomium
@@ -273,26 +306,26 @@ særlig godt.
 
 ### Modelfleksibilitet
 
-Det vi så ovenfor var, at vi havde forskellige modeller for data
+Det, vi så ovenfor, var, at vi havde forskellige modeller for data
 (polynomier af forskellig grad). Modellerne havde forskellig
 *fleksibilitet* (høj grad gav høj fleksibilitet). Når vi brugte en model
-med for lav fleksibilitet (lineær regression) kunne vi ikke tilpasse
+med for lav fleksibilitet (lineær regression), kunne vi ikke tilpasse
 modellen godt nok til data. Når vi valgte en model med for høj
-fleksibilitet (polynomium af grad syv) opstod der problemer med
-overfitting og modellen var ikke god til at beskrive nye data.
+fleksibilitet (polynomium af grad syv), opstod der problemer med
+overfitting, og modellen var ikke god til at beskrive nye data.
 
 Det tilsvarende problem opstår også i andre sammenhænge, når man har
 flere forskellige modeller at vælge imellem. Nogle vil være for
 ufleksible til at beskrive data ordentligt. Andre vil være for fleksible
 og føre til overfitting. Så hvordan finder vi et godt kompromis? Det
-handler de næste to kapitler om.
+handler det følgende om.
 
 ## Trænings- og testdata
 
 Når vi har et datasæt og prøver at tilpasse en polynomiel
 regressionsmodel, siger vi, at vi *træner* modellen. Datasættet vi
 bruger til at træne modellen kaldes *træningsdata*. Som vi så ovenfor,
-indebærer det en risiko for overfitting når vi træner modellen. Hvis vi
+indebærer det en risiko for overfitting, når vi træner modellen. Hvis vi
 kommer med et nyt datasæt af samme type, passer modellen ikke
 nødvendigvis særlig godt.
 
@@ -303,7 +336,7 @@ på, hvilken model der er bedst til at forudsige (også kaldet
 $(x_i^{test},y^{test}_i)$, hvor $i=1,\ldots,m$. Man kan måle, hvor godt
 modellen forudsiger testdata ved at se på forskellene
 $y_i^{test}-f(x_i^{test})$ mellem de observerede værdier $y_i^{test}$ og
-dem der forudsiges af polynomiet $f(x_i^{test})$. Som samlet mål for,
+dem, der forudsiges af polynomiet $f(x_i^{test})$. Som samlet mål for,
 hvor godt modellen forudsiger testdata, beregner vi kvadratsummen af
 disse forskelle
 $$E^{test} = \sum_{i=1}^{m} \left(y_i^{test} - {f}\left(x_i^{test}\right)\right)^2.$$
@@ -311,17 +344,17 @@ Man kalder $E^{test}$ for *tabsfunktionen*.
 
 I praksis har man typisk kun et datasæt til rådighed, og man er derfor
 nødt til først at dele data i to. Hele processen med at inddele data og
-først træne modellen og derefter teste den er som følger:
+først træne modellen og derefter teste den er, som følger:
 
 -   Vælg en polynomiumsgrad $p$.
 
--   Datasættet inddeles i to dele, en der bruges som træningsdata og en
+-   Datasættet inddeles i to dele, én del der bruges som træningsdata, og én del
     der bruges som testdata. Vi vil betegne punkterne i træningsdata med
     $(x_i^{træn},y_i^{træn})$, $i=1,\ldots,n$, og punkterne i testdata
     med $(x_i^{test},y_i^{test})$, $i=1,\ldots,m$.
 
 -   Vi træner modellen på træningsdatasættet og finder det
-    $p$te-gradspolynomium $$f(x)=a_0 + a_1 x + \dotsm + a_px^p$$ der
+    $p$'te-gradspolynomium $$f(x)=a_0 + a_1 x + \dotsm + a_px^p$$ der
     passer bedst på data. Mindste kvadraters metode benyttes til at
     bestemme $a_0,\ldots,a_p$ som de tal, der minimerer
     $$E^{træn}(p)=\sum_{i=1}^{n} (y_i^{træn} - {f}(x_i^{træn}))^2.$$ Det
@@ -337,10 +370,10 @@ polynomiumsgraden $p$. Det $p$, der giver den mindste værdi af
 $E^{test}(p)$ svarer altså til den model, der er bedst til at forudsige
 værdierne i vores testdata, og vi vælger derfor at bruge dette $p$.
 
-I vores eksempel ovenfor får vi $E^{test}(2)=1,82$ og $E^{test}(7)=2,29$
+I vores eksempel ovenfor får vi $E^{test}(2)=1.82$ og $E^{test}(7)=2.29$,
 når vi bruger de lyserøde datapunkter som testdata. Andengradspolynomiet
 er altså bedre end syvendegradspolynomiet til at forudsige testdata.
-Bemærk at i begge tilfælde er $E^{test}$ langt større end $E^{træn}$
+Bemærk, at i begge tilfælde er $E^{test}$ langt større end $E^{træn}$,
 fordi modellen kun er tilpasset til træningsdata.
 
 ## Krydsvalidering
@@ -356,22 +389,13 @@ trænings- og testproceduren flere gange. For at lave $k$-fold
 krydsvalidering deler man data op i $k$ lige store dele. I første fold
 træner man modellen på alt data undtagen den første del og bruger første
 del som testdata. Det given en tabsfunktion $E_1(p)$. Dette gentages så
-$k$ gange, hvor man i den $i$te fold bruger den $i$te del af data som
-testdata og resten som træningsdata og får en tabsfunktion $E_i(p)$.
-
-Som et samlet mål for, hvor god modellen er, bruges summen af
-tabsfunktionerne fra de $k$ fold
-$$E(p)=E_1(p) + E_2(p) + \dotsm + E_k(p).$$ Man vælger så den model der
-giver den mindste værdi af $E(p)$.
-
-Fordelen ved krydsvalidering er, at man i hver fold bruger det meste af
-data til at træne modellen på. Samtidig bliver hvert datapunkt alt i alt
-brugt præcis en gang til at teste på. På den måde får man udnyttet data
-bedre end hvis man bare laver en enkelt opdeling af data. Typisk vælger
-man $k=5$ eller $k=10$.
+$k$ gange, hvor man i den $i$'te fold bruger den $i$'te del af data som
+testdata og resten som træningsdata og får en tabsfunktion $E_i(p)$. Idéen er illustreret i @fig-krydsvalidering.
 
 ```{tikz k-fold}
 #| echo: false
+#| fig-cap: Illustration af idéen ved $5$-fold krydsvalidering.
+#| label: fig-krydsvalidering
 \begin{tikzpicture}
 	\draw[fill,red!30] (0,0) -- (2,0) -- (2,0.5) -- (0,0.5) -- (0,0);
 	\draw[fill, blue!30] (2,0) -- (10,0) -- (10,0.5) -- (2,0.5) -- (2,0);
@@ -408,13 +432,25 @@ man $k=5$ eller $k=10$.
 \end{tikzpicture}
 ```
 
+Som et samlet mål for, hvor god modellen er, bruges summen af
+tabsfunktionerne fra de $k$ fold
+$$E(p)=E_1(p) + E_2(p) + \dotsm + E_k(p).$$ Man vælger så den model, der
+giver den mindste værdi af $E(p)$.
+
+Fordelen ved krydsvalidering er, at man i hver fold bruger det meste af
+data til at træne modellen på. Samtidig bliver hvert datapunkt alt i alt
+brugt præcis én gang til at teste på. På den måde får man udnyttet data
+bedre end, hvis man bare laver en enkelt opdeling af data. Typisk vælger
+man $k=5$ eller $k=10$.
+
+
 
 ### Krydsvalidering i andre sammenhænge
 
 Krydsvalidering kan bruges i et væld af andre sammenhænge, hvor der skal
 vælges mellem flere forskellige prædiktionsmodeller.
 
-Hvis det der skal prædikteres er en talværdi, kan man gøre som ovenfor.
+Hvis det, der skal prædikteres, er en talværdi, kan man gøre som ovenfor.
 Algoritmen trænes på træningsdataet og bruges derefter til lave
 prædiktioner $\hat{y}_i^{test}$, $i=1,\ldots ,m$, af værdierne i
 testdatasættet. Disse sammenlignes med de faktiske værdier $y_i^{test}$
@@ -429,27 +465,31 @@ Som før trænes algoritmen på træningsdataet og derefter bruges den til
 lave prædiktioner af klasserne $\hat{y}_i^{test}$, $i=1,\ldots ,m$, i
 testdatasættet. Disse sammenholdes med de faktiske klasser, og vi bruger
 så *fejlraten* som tabsfuntion. Fejlraten angiver andelen af
-observationerne i testdataet, der bliver klassificeret forkert, dvs.
+observationerne i testdataet, der bliver klassificeret forkert, det vil sige
+
 $$
 E^{test} =  \frac{1}{m}\cdot (\text{antal fejlklassifikationer i testdata}).
 $$ {#eq-fejl}
+
 Modellen med lavest $E^{test}$ har færrest fejlklassifikationer og
 vælges derfor som den bedste.
 
 Eksempler her fra siden, hvor krydsvalidering kan benyttes:
 
--   I forløbet \"Hvem ligner du mest\" sammenligner man et gråt punkt
+-   I forløbet [Hvem ligner du mest](../undervisningsforloeb/hvem_ligner_du_mest.qmd) sammenligner man et gråt punkt
     med alle punkter inden for en radius $r$ for at forudsige farven.
     Det er ikke oplagt, hvordan man skal vælge dette $r$. En mulighed er
     at komme med nogle gode bud $r_1,\ldots, r_N$ på radier og så bruge
-    krydsvalidering til at vælge den bedste. En mulighed er at vælge
+    krydsvalidering til at vælge den bedste. Én mulighed er at vælge
     $k=n$. Så får man det, der kaldes *leave-one-out* krydsvalidering. I
     hver fold bliver der så kun et datapunkt i testdata, mens resten
     bruges som træningsdata. Det ene testdatapunkt farves gråt, og
-    farven prædikteres ud fra de øvrige datapunkter der ligger inden for
+    farven prædikteres ud fra de øvrige datapunkter, der ligger inden for
     den valgte radius. Prædiktionen sammenlignes med punktets rigtige
     farve. Dette gentages for alle datapunkter og fejlraten (@eq-fejl)
     beregnes til sidst. Vi vælger så den radius, der har lavest fejlrate.
+    
+- I noten om [Kunstige neurale nerværk](neurale_net/neurale_net.qmd) beskrives det, hvordan man træner et kunstigt neuralt netværk. Men når man gør det, skal man på forhånd have besluttet sig for, hvor mange skjulte lag der skal være i netværket, og hvor mange neuroner, der skal være i hvert skjult lag. Jo flere skjulte lag og jo flere neuroner -- desto større fleksibilitet. Her vil krydsvalidering være oplagt til at afgøre, hvor *fleksibelt* netværket skal være samtidig med, at man undgår *overfitting*.
     
     
 ```{r unused-code}

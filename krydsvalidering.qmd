@@ -1,6 +1,7 @@
 ---
 title: "Polynomiel regression og modeludvælgelse "
 author: 'Aalborg Intelligence'
+image: "images/overfitting.png"
 date: ''
 format:
     html: 
@@ -27,8 +28,11 @@ title-block-author-single: "Forfatter"
 fig-cap-location: margin
 ---
 
+
 ```{r}
 #| include=FALSE
+library(plotly)
+library(ggplot2)
 set.seed(12345)
 x<-(1:20)/8 # x-værdierne
 x1<- -(x^2 -2* x +1) # det underliggende andengradspolynomium
@@ -56,24 +60,39 @@ Fra gymnasieundervisningen kender I lineær regression. Lad os sige, at
 vi har datapunkter $(x_i,y_i)$, hvor $i=1,2,\ldots,n$. Vi vil gerne
 finde den rette linje, der bedst tilnærmer punkterne. I denne note
 kalder vi linjens skæring for $a_0$ og hældningen for $a_1$. Linjen har
-altså funktionsforskriften $$f(x) = a_0 + a_1x.$$ For at finde den
-bedste linje til at beskrive vores data, søger vi de værdier $a_0$ og
+altså funktionsforskriften[^1] 
+
+$$f(x) = a_0 + a_1x.$$ 
+
+For at finde den bedste linje til at beskrive vores data, søger vi de værdier $a_0$ og
 $a_1$ som gør, at $a_0 + a_1x_i$ er så tæt på $y_i$ som muligt. Vi vil
 altså gerne gøre afvigelserne fra linjen $y_i - (a_0 + a_1 x_i)$ så små
-som muligt. Som et samlet mål for hvor store disse afvigelser er for
-alle vores punkter, kigger vi på kvadratsummen af afvigelserne
-$$E=\sum_{i=1}^n \left(y_i - (a_0 + a_1x_i) \right)^2.$$ Vi vælger så de
-værdier $a_0$ og $a_1$, der gør $E$ mindst mulig. Dette kaldes *mindste
+som muligt. Bemærk, at disse afvigelser svarer til residualerne
+
+$$
+r_i=y_i - (a_0 + a_1 x_i)
+$$
+
+Som et samlet mål for hvor store disse afvigelser er for
+alle vores punkter, kigger vi på kvadratsummen af afvigelserne/residualerne
+
+$$
+E=\sum_{i=1}^n \left(y_i - (a_0 + a_1x_i) \right)^2 = \sum_{i=1}^n r_i^2 .
+$$ 
+
+Vi vælger så de værdier $a_0$ og $a_1$, der gør $E$ mindst mulig. Dette kaldes *mindste
 kvadraters metode*.
 
 ### Kvadratisk regression
 
 Hvad nu hvis det slet ikke ligner, at der er en lineær sammenhæng når vi
 tegner vores datapunkter ind i et koordinatsystem? Er det så overhovedet
-en god idé at forsøge med en lineær regression? På nedenstående plot ser
-det fx ikke ud til at punkterne følger en ret linje.
+en god idé at forsøge med en lineær regression? På @fig-ret_linje ser
+det for eksempel ikke ud til at punkterne følger en ret linje.
 ```{r}
 #| echo: false
+#| fig-cap: Til venstre ses et punktplot af et datasæt. Til højre er den bedste rette linje indtegnet.
+#| label: fig-ret_linje
 par(mfrow = c(1,2))
 model<-lm(y ~ x)
 plot(x,y)
@@ -84,18 +103,25 @@ lines(x2, predict(model,data.frame(x=x2)), col="red")
 Når $x$ ligger mellem 0 og 1, kunne der godt se ud til at være en svagt
 stigende tendens, mens der ser ud til at være en aftagende tendens for
 $x>1.5$. Den rette linje ser heller ikke ud til at følge punkterne
-særlig godt. Måske en parabel passer bedre på data?
+særlig godt. Måske en parabel passer bedre på data? 
 
 ```{r degree2}
 #| echo: false
+#| fig-cap: Datasættet fra @fig-ret_linje men nu med en parabel indtegnet.
+#| label: fig-parabel
 model<-lm(y ~ x + I(x^2))
 plot(x,y)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
 ```
 
-Det ser ud til, at parablen følger datapunkterne langt bedre. Vi kunne
+Det ser ud til, at parablen i @fig-parabel følger datapunkterne langt bedre. Vi kunne
 således prøve at modellere $y$ ved hjælp af et andengradspolynomium i
-$x$. Lad $f$ betegne andengradspolynomiet $$f(x) = a_0 + a_1x + a_2x^2$$
+$x$. Lad $f$ betegne andengradspolynomiet[^2] 
+
+$$
+f(x) = a_0 + a_1x + a_2x^2
+$$
+
 med koefficienter $a_0,a_1,a_2\in \mathbb{R}$.
 
 Hvordan finder man så det andengradspolynomium, der bedst beskriver
@@ -123,12 +149,14 @@ helt tilsvarende måde. Vi kan fx prøve at tilpasse et
 tredjegradspolynomium $$f(x) = a_0 + a_1x + a_2x^2 +a_3x^3.$$ Det bedste
 tredjegradspolynomium er igen det, der minimerer kvadratsummen
 $$E=\sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n \left(y_i - (a_0 + a_1x_i + a_2x_i^2 + a_3x^3 )\right)^2.$$
-Grafen for det bedste tredjegradspolynomium er indtegnet i grøn for vores
-dataeksempel. Andengradspolynomiet er indtegnet med rød til
+Grafen for det bedste tredjegradspolynomium er indtegnet med grøn for vores
+dataeksempel i @fig-2grad_3grad. Andengradspolynomiet er indtegnet med rød til
 sammenligning.
 
 ```{r}
 #| echo: false
+#| fig-cap: Et andengradspolynomium (rød) og et tredjegradspolynomium (grøn) fittet til data. 
+#| label: fig-2grad_3grad
 model3<-lm(y ~ x + I(x^2) + I(x^3))
 plot(x,y)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
@@ -141,11 +169,13 @@ legend(x = "bottomleft",          # Position
 ```
 
 Det er ikke så let at se forskel. De to polynomier ser ud til at passe
-nogenlunde lige godt på vores data. Hvis vi zoomer ud på plottet
-ovenfor, er der dog en klar forskel:
+nogenlunde lige godt på vores data. Men i @fig-2grad_3grad_zoom har vi zoomet ud på plottet
+ovenfor, og her er der en klar forskel:
 
 ```{r extrapolate}
 #| echo: false
+#| fig-cap: Plottet fra @fig-2grad_3grad men hvor der nu er zoomet lidt ud. Her ses det tydeligt, at der i "enderne" bliver stor forskel på anden- og tredjegradspolynomiet.
+#| label: fig-2grad_3grad_zoom
 model3<-lm(y ~ x + I(x^2) + I(x^3))
 plot(x,y, xlim=c(-1,3),ylim=c(-4,0.5))
 x2<-1:400/100 -1
@@ -447,3 +477,5 @@ Eksempler her fra siden, hvor krydsvalidering kan benyttes:
 
 ```
 
+[^1]: Du er vant til, at forskriften for en lineær funktion er på formen $f(x)=ax+b$. Men lige om lidt viser skrivemåden $f(x)=a_0+a_1x$ sig nyttig. I forhold til det, du kender, svarer det til, at $a_0=b$ og $a_1=a$.
+[^2]: I gymnasiet skriver vi som regel forskriften for et andengradspolynomium på formen $f(x)=ax^2+bx+c$. Med notationen, som vi bruger her, svarer det til, at $a_0=c, a_1=b$ og $a_2=a$.

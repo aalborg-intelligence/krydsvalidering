@@ -31,8 +31,6 @@ fig-cap-location: margin
 
 ```{r}
 #| include=FALSE
-library(plotly)
-library(ggplot2)
 set.seed(12345)
 x<-(1:20)/8 # x-værdierne
 x1<- -(x^2 -2* x +1) # det underliggende andengradspolynomium

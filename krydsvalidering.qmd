@@ -93,35 +93,30 @@ kvadraters metode*.
 
 Hvad nu hvis det slet ikke ligner, at der er en lineær sammenhæng, når vi
 tegner vores datapunkter ind i et koordinatsystem? Er det så overhovedet
-<<<<<<< HEAD
 en god idé at forsøge med en lineær regression? På @fig-ret_linje ser
 det for eksempel ikke ud til at punkterne følger en ret linje.
-```{r}
-=======
-en god idé at forsøge med en lineær regression? På nedenstående plot ser
-det fx ikke ud til at punkterne følger en ret linje.
+
 ```{r fig.width=8, fig.height=4}
->>>>>>> ada457b948428f6ad28826d6c946fa289d94eed2
 #| echo: false
 #| fig-cap: Til venstre ses et punktplot af et datasæt. Til højre er den bedste rette linje indtegnet.
 #| label: fig-ret_linje
 par(mfrow = c(1,2),mar=c(4,4,1,1))
 model<-lm(y ~ x)
-plot(x,y)
-plot(x,y)
-lines(x2, predict(model,data.frame(x=x2)), col="red")
+plot(x,y,pch=16)
+plot(x,y,pch=16)
+lines(x2, predict(model,data.frame(x=x2)), col="magenta")
 ```
 
 Det fremgår også af residualplottet i @fig-residualplot. Her kan vi tydeligt se, at der er et mønster i den måde, residualerne fordeler sig omkring $x$-aksen. Det er altså tegn på, at en ret linje ikke er velegnet til at beskrive datapunkterne.
 
-```{r}
+```{r fig.width=4, fig.height=4}
 #| echo: false
 #| fig-cap: Residualplottet for den bedste rette linje indtegnet i @fig-ret_linje.
 #| label: fig-residualplot
 par(mar=c(4,4,1,1))
 model<-lm(y ~ x)
 yhat <- predict(model,data.frame(x=x))
-plot(x,y-yhat,ylab="residual")
+plot(x,y-yhat,ylab="residual",pch=16)
 abline(h=0)
 ```
 
@@ -135,7 +130,7 @@ $x>1.5$. Det svarer til, at residualerne i @fig-residualplot først er negative,
 #| label: fig-parabel
 par(mar=c(4,4,1,1))
 model<-lm(y ~ x + I(x^2))
-plot(x,y)
+plot(x,y,pch=16)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
 ```
 
@@ -152,15 +147,17 @@ med koefficienter $a_0,a_1,a_2\in \mathbb{R}$.
 Hvordan finder man så det andengradspolynomium, der bedst beskriver
 datapunkterne? Tilgangen er faktisk den samme som den mindste kvadraters
 metode, I kender fra lineær regression. Vi søger de værdier
-$a_0, a_1 ,a_2$, som gør, at $f(x_i)$ kommer så tæt på $y_i$ som muligt.
+$a_0, a_1$ og $a_2$, som gør, at $f(x_i)$ kommer så tæt på $y_i$ som muligt.
 Vi vil altså gerne gøre forskellene $y_i - f(x_i)$ så små som muligt. Vi
 kigger derfor på kvadratsummen af disse forskelle
 $$E=\sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n \left(y_i - (a_0 + a_1x_i + a_2x_i^2)\right)^2.$$
-Vi søger så de værdier $a_0,a_1,a_2$, der minimerer $E$.
+Vi søger så de værdier $a_0,a_1$ og $a_2$, der minimerer $E$.
 
 Gør man det i vores lille dataeksempel, fås netop den parabel, der er
 tegnet ind i koordinatsystemet i @fig-parabel. Vi ser, at den beskriver data
-langt bedre end den rette linje. Eksemplet viser i øvrigt vigtigheden af
+langt bedre end den rette linje. 
+
+Eksemplet viser vigtigheden af
 at tegne datapunkterne ind i et koordinatsystem, inden man laver lineær
 regression. Ellers kan man nemt komme til at overse en eventuel
 ikke-lineær sammenhæng.
@@ -189,7 +186,7 @@ sammenligning.
 #| label: fig-2grad_3grad
 par(mar=c(4,4,1,1))
 model3<-lm(y ~ x + I(x^2) + I(x^3))
-plot(x,y)
+plot(x,y,pch=16)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
 lines(x2,predict(model3,data.frame(x=x2)),col="green")
 legend(x = "bottomleft",          # Position
@@ -200,7 +197,7 @@ legend(x = "bottomleft",          # Position
 ```
 
 Det er ikke så let at se forskel. De to polynomier ser ud til at passe
-nogenlunde lige godt på vores data. Men i @fig-2grad_3grad_zoom har vi zoomet ud på plottet
+nogenlunde lige godt på vores data. Men i @fig-2grad_3grad_zoom har vi zoomet ud på figuren
 ovenfor, og her er der en klar forskel:
 
 ```{r extrapolate, fig.width=4, fig.height=4}
@@ -209,8 +206,8 @@ ovenfor, og her er der en klar forskel:
 #| label: fig-2grad_3grad_zoom
 par(mar=c(4,4,1,1))
 model3<-lm(y ~ x + I(x^2) + I(x^3))
-plot(x,y, xlim=c(-1,3),ylim=c(-4,0.5))
-x2<-1:400/100 -1
+plot(x,y, xlim=c(-2,3),ylim=c(-4,0.5),pch=16)
+x2<-1:500/100 -2
 lines(x2, predict(model, data.frame(x=x2)), col="red")
 lines(x2, predict(model3, data.frame(x=x2)), col="green")
 legend(x = "bottomleft",          # Position
@@ -235,7 +232,9 @@ enderne.
 Det er altså svært at afgøre med det blotte øje, om anden- eller
 tredjegradspolynomiet passer bedst til punkterne. Hvordan vælger vi så,
 hvad der er bedst? Som mål for, hvor tæt polynomiet er på data, kan vi
-kigge på kvadratsummen $$E=\sum_{i=1}^n (y_i - f(x_i))^2.$$ For
+kigge på kvadratsummen af afvigelserne $y_i - f(x_i)$, altså
+$$E=\sum_{i=1}^n (y_i - f(x_i))^2.$$
+For
 andengradspolynomiet får vi en kvadratsum på $E=1.14$, mens vi får
 $E=1.10$ for tredjegradspolynomiet. Tredjegradspolynomiet kommer altså
 tættere på data end andengradspolynomiet. Det er på den anden side ikke
@@ -258,7 +257,7 @@ med blå på @fig-2grad_7grad nedenfor:
 #| label: fig-2grad_7grad
 par(mar=c(4,4,1,1))
 model7<-lm(y ~ x + I(x^2) + I(x^3) + I(x^4) + I(x^5) + I(x^6) + I(x^7))
-plot(x,y)
+plot(x,y,pch=16)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
 lines(x2,predict(model7,data.frame(x=x2)),col="blue")
 legend(x = "bottomleft",          # Position
@@ -274,29 +273,29 @@ bugter sig meget for at komme så tæt som muligt på datapunkterne. Dels
 virker det urealistisk, at den faktiske sammenhæng mellem $x$ og $y$
 skulle være så kompliceret. Dels opstår der et problem, hvis vi kommer
 med nye datapunkter. I @fig-2grad_7grad_nypunkter er polynomierne fra før tegnet sammen med 20
-nye datapunkter i lyserød. Nu beskriver syvendegradspolynomiet pludselig
+nye datapunkter i orange. Nu beskriver syvendegradspolynomiet pludselig
 ikke datapunkterne så godt længere.
 
 ```{r overfitting, fig.width=8, fig.height=4}
 #| echo: false
-#| fig-cap: Et andengradspolynomium (rød) og et syvendegradspolynomium (blå) fittet til 20 nye datapunkter (lyserød). 
+#| fig-cap: Et andengradspolynomium (rød) og et syvendegradspolynomium (blå) fittet til 20 nye datapunkter (orange). 
 #| label: fig-2grad_7grad_nypunkter
 par(mfrow = c(1,2),mar=c(4,4,2,1))
 set.seed(1234)
 v<-rnorm(20,0,sigma)
 #plot(x,y)
 x2<-1:400/100 -1
-<<<<<<< HEAD
-plot(x,x1+v,col="magenta", main="Grad 2", ,ylab="y")
+
+plot(x,x1+v,col="orange", main="Grad 2", ,ylab="y",pch=16)
 lines(x2,predict(model,data.frame(x=x2)),col="red")
 #plot(x,y)
-plot(x,x1+v,col="magenta",main="Grad 7", ,ylab="y")
-=======
-plot(x,x1+v,col="magenta", main="Grad 2",ylab="y")
-lines(x2,predict(model,data.frame(x=x2)),col="red")
+plot(x,x1+v,col="orange",main="Grad 7", ,ylab="y",pch=16)
+
+#plot(x,x1+v,col="magenta", main="Grad 2",ylab="y",pch=16)
+#lines(x2,predict(model,data.frame(x=x2)),col="red")
 #plot(x,y)
-plot(x,x1+v,col="magenta",main="Grad 7",ylab="y")
->>>>>>> ada457b948428f6ad28826d6c946fa289d94eed2
+#plot(x,x1+v,col="magenta",main="Grad 7",ylab="y",pch=16)
+
 lines(x2,predict(model7,data.frame(x=x2)),col="blue")
 
 ```
@@ -319,7 +318,7 @@ særlig godt.
 
 Det, vi så ovenfor, var, at vi havde forskellige modeller for data
 (polynomier af forskellig grad). Modellerne havde forskellig
-*fleksibilitet* (høj grad gav høj fleksibilitet). Når vi brugte en model
+*fleksibilitet* (høj grad gjorde polynomiet meget fleksibelt). Når vi brugte en model
 med for lav fleksibilitet (lineær regression), kunne vi ikke tilpasse
 modellen godt nok til data. Når vi valgte en model med for høj
 fleksibilitet (polynomium af grad syv), opstod der problemer med
@@ -382,7 +381,7 @@ $E^{test}(p)$ svarer altså til den model, der er bedst til at forudsige
 værdierne i vores testdata, og vi vælger derfor at bruge dette $p$.
 
 I vores eksempel ovenfor får vi $E^{test}(2)=1.82$ og $E^{test}(7)=2.29$,
-når vi bruger de lyserøde datapunkter som testdata. Andengradspolynomiet
+når vi bruger de orange datapunkter som testdata. Andengradspolynomiet
 er altså bedre end syvendegradspolynomiet til at forudsige testdata.
 Bemærk, at i begge tilfælde er $E^{test}$ langt større end $E^{træn}$,
 fordi modellen kun er tilpasset til træningsdata.
@@ -471,7 +470,7 @@ $$E^{test} = \sum_{i=1}^m(y_i^{test}-\hat{y}_i^{test})^2.$$ Modellen med
 lavest $E^{test}$ er bedst til at lave nye prædiktioner.
 
 Hvis der derimod er tale om et klassifikationsproblem, hvor der skal
-prædikteres en klasse, skal man definere tabsfunktionen lidt anderledes.
+prædikteres en klasse (fx mand/kvinde, rød blok/blå blok, almindelig mail/spam), skal man definere tabsfunktionen lidt anderledes.
 Som før trænes algoritmen på træningsdataet og derefter bruges den til
 lave prædiktioner af klasserne $\hat{y}_i^{test}$, $i=1,\ldots ,m$, i
 testdatasættet. Disse sammenholdes med de faktiske klasser, og vi bruger

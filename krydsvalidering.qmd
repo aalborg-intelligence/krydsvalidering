@@ -105,10 +105,14 @@ det for eksempel ikke ud til at punkterne følger en ret linje.
 #| fig-cap: Til venstre ses et punktplot af et datasæt. Til højre er den bedste rette linje indtegnet.
 #| label: fig-ret_linje
 par(mfrow = c(1,2),mar=c(4,4,1,1))
-model<-lm(y ~ x)
-plot(x,y,pch=16)
-plot(x,y,pch=16)
-lines(x2, predict(model,data.frame(x=x2)), col="magenta")
+model<-lm(y  ~ x)
+plot(x,y+2.3,pch=16,ylab="y",axes=FALSE,xlim=c(0,2.5),ylim=c(0,2.7))
+axis(2, at=c(0,0.5,1,1.5,2,2.5,3), labels=c(0,"",1,"",2,"",3), pos=0)
+axis(1,at=c(0,0.5,1,1.5,2,2.5,3) ,labels=c(0,"",1,"",2,"",3), pos=0)
+plot(x,y+2.3,pch=16,ylab="y",axes=FALSE,xlim=c(0,2.5),ylim=c(0,2.7))
+lines(x2,2+ predict(model,data.frame(x=x2)), col="magenta")
+axis(2, at=c(0,0.5,1,1.5,2,2.5,3), labels=c(0,"",1,"",2,"",3), pos=0)
+axis(1,at=c(0,0.5,1,1.5,2,2.5,3) ,labels=c(0,"",1,"",2,"",3), pos=0)
 ```
 
 Det fremgår også af residualplottet i @fig-residualplot. Her kan vi tydeligt se, at der er et mønster i den måde, residualerne fordeler sig omkring $x$-aksen. Det er altså tegn på, at en ret linje ikke er velegnet til at beskrive datapunkterne.
@@ -120,8 +124,10 @@ Det fremgår også af residualplottet i @fig-residualplot. Her kan vi tydeligt s
 par(mar=c(4,4,1,1))
 model<-lm(y ~ x)
 yhat <- predict(model,data.frame(x=x))
-plot(x,y-yhat,ylab="residual",pch=16)
+plot(x,y-yhat,ylab="residual",pch=16,axes=FALSE, xlim=c(0,2.5),ylim=c(-1,1))
 abline(h=0)
+axis(2, at=c(-2,-1,-0.5,0,0.5,1,2), pos=0)
+axis(1, at=c(-1,0.5,1,1.5,2,2.5,3),labels=c(-1,"",1,"",2,"",3) , pos=0)
 ```
 
 Når $x$ ligger mellem 0 og 1, kunne der godt se ud til at være en svagt
@@ -134,8 +140,10 @@ $x>1.5$. Det svarer til, at residualerne i @fig-residualplot først er negative,
 #| label: fig-parabel
 par(mar=c(4,4,1,1))
 model<-lm(y ~ x + I(x^2))
-plot(x,y,pch=16)
-lines(x2,predict(model,data.frame(x=x2)),col="red")
+plot(x,y+2.3,pch=16,ylab="y",axes=FALSE,xlim=c(0,2.5),ylim=c(0,2.7))
+lines(x2,predict(model,data.frame(x=x2))+2.3,col="red")
+axis(2, at=c(0,0.5,1,1.5,2,2.5,3), labels=c(0,"",1,"",2,"",3), pos=0)
+axis(1,at=c(0,0.5,1,1.5,2,2.5,3) ,labels=c(0,"",1,"",2,"",3), pos=0)
 ```
 
 Det ser ud til, at parablen i @fig-parabel følger datapunkterne langt bedre. Vi kunne
@@ -179,7 +187,7 @@ f(x) = a_0 + a_1x + a_2x^2 +a_3x^3.
 $$ 
 
 Det bedste tredjegradspolynomium er igen det, der minimerer kvadratsummen
-$$E=\sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n \left(y_i - (a_0 + a_1x_i + a_2x_i^2 + a_3x^3 )\right)^2.$$
+$$E=\sum_{i=1}^n (y_i - f(x_i))^2 = \sum_{i=1}^n \left(y_i - (a_0 + a_1x_i + a_2x_i^2 + a_3x_i^3 )\right)^2.$$
 Grafen for det bedste tredjegradspolynomium er indtegnet med grøn for vores
 dataeksempel i @fig-2grad_3grad. Andengradspolynomiet er indtegnet med rød til
 sammenligning.
@@ -190,14 +198,16 @@ sammenligning.
 #| label: fig-2grad_3grad
 par(mar=c(4,4,1,1))
 model3<-lm(y ~ x + I(x^2) + I(x^3))
-plot(x,y,pch=16)
-lines(x2,predict(model,data.frame(x=x2)),col="red")
-lines(x2,predict(model3,data.frame(x=x2)),col="green")
-legend(x = "bottomleft",          # Position
+plot(x,y+2.3,pch=16,ylab="y",axes=FALSE,xlim=c(0,2.5),ylim=c(0,2.7))
+lines(x2,predict(model,data.frame(x=x2))+2.3,col="red")
+lines(x2,predict(model3,data.frame(x=x2))+2.3,col="green")
+legend(x = c(0,1.3),y=c(0,0.7),          # Position
        legend = c("Grad 2", "Grad 3"),  # Legend texts
        lty = c(1, 1),           # Line types
        col = c("red", "green"),           # Line colors
        lwd = 2) 
+axis(2, at=c(0,0.5,1,1.5,2,2.5,3), labels=c(0,"",1,"",2,"",3), pos=0)
+axis(1,at=c(0,0.5,1,1.5,2,2.5,3) ,labels=c(0,"",1,"",2,"",3), pos=0)
 ```
 
 Det er ikke så let at se forskel. De to polynomier ser ud til at passe
@@ -210,15 +220,17 @@ ovenfor, og her er der en klar forskel:
 #| label: fig-2grad_3grad_zoom
 par(mar=c(4,4,1,1))
 model3<-lm(y ~ x + I(x^2) + I(x^3))
-plot(x,y, xlim=c(-2,3),ylim=c(-4,0.5),pch=16)
+plot(x,y+2.3, xlim=c(-2,3),ylim=c(-2,2.7),pch=16,ylab="y",axes=FALSE)
 x2<-1:500/100 -2
-lines(x2, predict(model, data.frame(x=x2)), col="red")
-lines(x2, predict(model3, data.frame(x=x2)), col="green")
-legend(x = "bottomleft",          # Position
+lines(x2, predict(model, data.frame(x=x2))+2.3, col="red")
+lines(x2, predict(model3, data.frame(x=x2))+2.3, col="green")
+legend(x = c(-2.2,0), y=c(1.7,2.7),          # Position
        legend = c("Grad 2", "Grad 3"),  # Legend texts
        lty = c(1, 1),           # Line types
        col = c("red", "green"),           # Line colors
        lwd = 2) 
+axis(2, at=c(-3,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3), labels=c(-3,-2,"",-1,"","","",1,"","","",3), pos=0)
+axis(1,at=c(-3,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3) ,labels=c(-3,-2,"",-1,"","","",1,"",2,"",3), pos=0)
 ```
 
 Selv om der ikke var stor forskel på anden- og tredjegradspolynomiet på
@@ -261,14 +273,16 @@ med blå på @fig-2grad_7grad nedenfor:
 #| label: fig-2grad_7grad
 par(mar=c(4,4,1,1))
 model7<-lm(y ~ x + I(x^2) + I(x^3) + I(x^4) + I(x^5) + I(x^6) + I(x^7))
-plot(x,y,pch=16)
-lines(x2,predict(model,data.frame(x=x2)),col="red")
-lines(x2,predict(model7,data.frame(x=x2)),col="blue")
-legend(x = "bottomleft",          # Position
+plot(x,y+2.3,pch=16,xlim=c(0,2.5),ylim=c(0,2.7),ylab="y",axes=FALSE)
+lines(x2,predict(model,data.frame(x=x2))+2.3,col="red")
+lines(x2,predict(model7,data.frame(x=x2))+2.3,col="blue")
+legend(x = c(0,1.3),y=c(0,0.7),          # Position
        legend = c("Grad 2", "Grad 7"),  # Legend texts
        lty = c(1, 1),           # Line types
        col = c("red", "blue"),           # Line colors
        lwd = 2) 
+axis(2, at=c(-3,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3), labels=c(-3,-2,"",-1,"",0,"",1,"",2,"",3), pos=0)
+axis(1,at=c(-3,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3) ,labels=c(-3,-2,"",-1,"",0,"",1,"",2,"",3), pos=0)
 ```
 
 Kvadratsummen er på kun $E=0.90$, så umiddelbart virker det til at være
@@ -290,17 +304,22 @@ v<-rnorm(20,0,sigma)
 #plot(x,y)
 x2<-1:400/100 -1
 
-plot(x,x1+v,col="orange", main="Grad 2", ,ylab="y",pch=16)
-lines(x2,predict(model,data.frame(x=x2)),col="red")
+plot(x,x1+v+2.3,col="orange", main="Grad 2",ylab="y",pch=16,,xlim=c(0,2.5),ylim=c(0,2.5),axes=FALSE)
+lines(x2,predict(model,data.frame(x=x2))+2.3,col="red")
+axis(2, at=c(-3,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3), labels=c(-3,-2,"",-1,"",0,"",1,"",2,"",3), pos=0)
+axis(1,at=c(-3,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3) ,labels=c(-3,-2,"",-1,"",0,"",1,"",2,"",3), pos=0)
+
 #plot(x,y)
-plot(x,x1+v,col="orange",main="Grad 7", ,ylab="y",pch=16)
+plot(x,x1+v+2.3,col="orange",main="Grad 7", ,ylab="y",pch=16,xlim=c(0,2.5),ylim=c(0,2.5),axes=FALSE)
 
 #plot(x,x1+v,col="magenta", main="Grad 2",ylab="y",pch=16)
 #lines(x2,predict(model,data.frame(x=x2)),col="red")
 #plot(x,y)
 #plot(x,x1+v,col="magenta",main="Grad 7",ylab="y",pch=16)
 
-lines(x2,predict(model7,data.frame(x=x2)),col="blue")
+lines(x2,predict(model7,data.frame(x=x2))+2.3,col="blue")
+axis(2, at=c(-3,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3), labels=c(-3,-2,"",-1,"",0,"",1,"",2,"",3), pos=0)
+axis(1,at=c(-3,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3) ,labels=c(-3,-2,"",-1,"",0,"",1,"",2,"",3), pos=0)
 
 ```
 

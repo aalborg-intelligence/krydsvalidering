@@ -95,9 +95,15 @@ kvadraters metode*.
 
 Hvad nu hvis det slet ikke ligner, at der er en lineær sammenhæng, når vi
 tegner vores datapunkter ind i et koordinatsystem? Er det så overhovedet
+<<<<<<< HEAD
 en god idé at forsøge med en lineær regression? På @fig-ret_linje ser
 det for eksempel ikke ud til at punkterne følger en ret linje.
 ```{r}
+=======
+en god idé at forsøge med en lineær regression? På nedenstående plot ser
+det fx ikke ud til at punkterne følger en ret linje.
+```{r fig.width=8, fig.height=4}
+>>>>>>> ada457b948428f6ad28826d6c946fa289d94eed2
 #| echo: false
 #| fig-cap: Til venstre ses et punktplot af et datasæt. Til højre er den bedste rette linje indtegnet.
 #| label: fig-ret_linje
@@ -125,7 +131,7 @@ Når $x$ ligger mellem 0 og 1, kunne der godt se ud til at være en svagt
 stigende tendens i @fig-ret_linje, mens der ser ud til at være en aftagende tendens for
 $x>1.5$. Det svarer til, at residualerne i @fig-residualplot først er negative, så positive og dernæst negative igen. Den rette linje i @fig-ret_linje ser heller ikke ud til at følge punkterne særlig godt. Måske en parabel passer bedre på data? 
 
-```{r degree2}
+```{r degree2, fig.width=4, fig.height=4}
 #| echo: false
 #| fig-cap: Datasættet fra @fig-ret_linje, men nu med en parabel indtegnet.
 #| label: fig-parabel
@@ -179,7 +185,7 @@ Grafen for det bedste tredjegradspolynomium er indtegnet med grøn for vores
 dataeksempel i @fig-2grad_3grad. Andengradspolynomiet er indtegnet med rød til
 sammenligning.
 
-```{r}
+```{r fig.height=4, fig.width=4}
 #| echo: false
 #| fig-cap: Et andengradspolynomium (rød) og et tredjegradspolynomium (grøn) fittet til data. 
 #| label: fig-2grad_3grad
@@ -199,7 +205,7 @@ Det er ikke så let at se forskel. De to polynomier ser ud til at passe
 nogenlunde lige godt på vores data. Men i @fig-2grad_3grad_zoom har vi zoomet ud på plottet
 ovenfor, og her er der en klar forskel:
 
-```{r extrapolate}
+```{r extrapolate, fig.width=4, fig.height=4}
 #| echo: false
 #| fig-cap: Plottet fra @fig-2grad_3grad, men hvor der nu er zoomet lidt ud. Her ses det tydeligt, at der i "enderne" bliver stor forskel på anden- og tredjegradspolynomiet.
 #| label: fig-2grad_3grad_zoom
@@ -248,7 +254,7 @@ der minimerer kvadratsummen $$E=\sum_{i=1}^n (y_i - f(x_i))^2 .$$ Det
 bedste syvendegradspolynomium i vores lille dataeksempel er indtegnet
 med blå på @fig-2grad_7grad nedenfor:
 
-```{r degree7}
+```{r degree7, fig.width=4, fig.height=4}
 #| echo: false
 #| fig-cap: Et andengradspolynomium (rød) og et syvendegradspolynomium (blå) fittet til data. 
 #| label: fig-2grad_7grad
@@ -273,7 +279,7 @@ med nye datapunkter. I @fig-2grad_7grad_nypunkter er polynomierne fra før tegne
 nye datapunkter i lyserød. Nu beskriver syvendegradspolynomiet pludselig
 ikke datapunkterne så godt længere.
 
-```{r overfitting}
+```{r overfitting, fig.width=8, fig.height=4}
 #| echo: false
 #| fig-cap: Et andengradspolynomium (rød) og et syvendegradspolynomium (blå) fittet til 20 nye datapunkter (lyserød). 
 #| label: fig-2grad_7grad_nypunkter
@@ -282,10 +288,17 @@ set.seed(1234)
 v<-rnorm(20,0,sigma)
 #plot(x,y)
 x2<-1:400/100 -1
+<<<<<<< HEAD
 plot(x,x1+v,col="magenta", main="Grad 2", ,ylab="y")
 lines(x2,predict(model,data.frame(x=x2)),col="red")
 #plot(x,y)
 plot(x,x1+v,col="magenta",main="Grad 7", ,ylab="y")
+=======
+plot(x,x1+v,col="magenta", main="Grad 2",ylab="y")
+lines(x2,predict(model,data.frame(x=x2)),col="red")
+#plot(x,y)
+plot(x,x1+v,col="magenta",main="Grad 7",ylab="y")
+>>>>>>> ada457b948428f6ad28826d6c946fa289d94eed2
 lines(x2,predict(model7,data.frame(x=x2)),col="blue")
 
 ```
@@ -478,7 +491,7 @@ Eksempler her fra siden, hvor krydsvalidering kan benyttes:
 
 -   I forløbet [Hvem ligner du mest](../undervisningsforloeb/hvem_ligner_du_mest.qmd) sammenligner man et gråt punkt
     med alle punkter inden for en radius $r$ for at forudsige farven.
-    Det er ikke oplagt, hvordan man skal vælge dette $r$. En mulighed er
+    Det er ikke oplagt, hvordan man skal vælge denne radius. En mulighed er
     at komme med nogle gode bud $r_1,\ldots, r_N$ på radier og så bruge
     krydsvalidering til at vælge den bedste. Én mulighed er at vælge
     $k=n$. Så får man det, der kaldes *leave-one-out* krydsvalidering. I

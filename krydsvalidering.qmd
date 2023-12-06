@@ -403,11 +403,19 @@ polynomiumsgraden $p$. Det $p$, der giver den mindste værdi af
 $E^{test}(p)$ svarer altså til den model, der er bedst til at forudsige
 værdierne i vores testdata, og vi vælger derfor at bruge dette $p$.
 
+
 I vores eksempel ovenfor får vi $E^{test}(2)=1.82$ og $E^{test}(7)=2.29$,
-når vi bruger de orange datapunkter som testdata. Andengradspolynomiet
-er altså bedre end syvendegradspolynomiet til at forudsige testdata.
+når vi bruger de sorte datapunkter som træningsdata og de orange datapunkter som testdata. Andengradspolynomiet er altså bedre end syvendegradspolynomiet til at forudsige testdata.
 Bemærk, at i begge tilfælde er $E^{test}$ langt større end $E^{træn}$,
 fordi modellen kun er tilpasset til træningsdata.
+
+Når det bedst mulige $p$ er valgt, kan man så træne modellen igen på alt dataet, både test- og træningsdata, for at få et mere præcist bud på det bedste polynomium. Dette er så vores endelige model for data.  I vores eksempel finder man, at $p=2$ giver lavest $E^{test}$. Vi slår så de sorte og orange datapunkter sammen til et datasæt og bruger dem til at finde det bedste andengradspolynomium. Det giver vores endelige model for sammenhængen mellem $x$ og $y$, som bliver 
+$$
+f(x) = 1.36 + 1.72x - 0.87x^2.
+$$
+
+
+
 
 ## Krydsvalidering
 
